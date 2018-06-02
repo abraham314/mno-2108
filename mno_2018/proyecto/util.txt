@@ -1,0 +1,10 @@
+/usr/local/cuda-9.0/bin
+
+https://es.slideshare.net/NavalOPSEC/phishing-18488702
+
+https://gist.github.com/zhanwenchen/e520767a409325d9961072f666815bb8
+
+wget https://developer.nvidia.com/compute/cuda/8.0/Prod/local_installers/cuda_8.0.61_375.26_linux.run
+
+https://developer.nvidia.com/cuda-80-ga2-download-archive/cuda_8.0.61_375.26_linux.run
+https://antoinevastel.com/machine%20learning/python/2016/02/14/svd-recommender-system.html svd python pred

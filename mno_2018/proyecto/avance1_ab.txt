@@ -1,0 +1,49 @@
+Se reviso el paper https://pdfs.semanticscholar.org/62c1/1a6f10ed2dd1c954297733e92641e7cd6fb9.pdf  donde habla de hacer la descomposición SVD en GPUs a tráves de CUDA, en orden de importancia el punto número 3 habla del desarrollo del algoritmo SVD usando el método de  Golub-Reinsch que consiste en 2 pasos: 1.-reducir la matriz original a una matriz bidiagonal y 2.- diagonalizar la matriz encontrada en el paso 1. siguiendo estos pasos podemos construir las matrices U,V,S que cumplan A=U*S*V.T.
+En el punto 3.1.2 se explica la bidiagonalización en el GPU, donde se meciona que cada paso del algoritmo de bidiagonalización se puede realizar con funciones de CUDA BLAS(CUBLAS) se recomienda ajustar las dimensiones de las matrices a múltiplos de 32. en el punto 3.2.2 se presenta una explicación de la forma de hacer la paralelización  del paso 2 del algoritmo de Golub-Reinsch (diagonalización), al final la idea es implementar SVD en GPU's para aprovechar el paralelismo, pero lo relevante es que para el paso de diagonalización se divide el computo entre GPU y CPU para mejorar el desempeño de este.    
+
+Bidiagonalización paralela.
+https://dml.cz/bitstream/handle/10338.dmlcz/702748/PANM_15-2010-1_18.pdf
+
+SVD A sistemas de recomendación
+http://informatico.ricardomoya.es/docs/ProyectoFinDeMaster_V1.pdf
+
+SVD APLICADO A SISTEMAS DE
+RECOMENDACIÓN BASADOS EN
+FILTRADO COLABORATIVO
+http://informatico.ricardomoya.es/docs/ProyectoFinDeMaster_V1.pdf
+
+Singular Value Decomposition on GPU using CUDA
+https://pdfs.semanticscholar.org/62c1/1a6f10ed2dd1c954297733e92641e7cd6fb9.pdf
+
+Parallel Implementation of Singular Value
+Decomposition (SVD) in Image Compression
+using Open Mp and Sparse Matrix Representation
+http://www.indjst.org/index.php/indjst/article/view/59410/56254
+
+
+Parallel Code for One-sided Jacobi-Method
+https://www.uni-salzburg.at/fileadmin/multimedia/Computerwissenschaften/documents/Technical_Reports/2015-02_Becka_Oksa_Vajtersic.pdf
+
+
+
+
+
+git de svd en cuda
+https://github.com/OrangeOwlSolutions/Linear-Algebra/blob/master/SVD/SVD.cu
+
+
+
+PARALLEL SVD COMPUTATION∗
+https://dml.cz/bitstream/handle/10338.dmlcz/702748/PANM_15-2010-1_18.pdf
+
+
+Taming Text with the SVD
+ftp://ftp.sas.com/techsup/download/EMiner/TamingTextwiththeSVD.pdf
+
+
+/Parallel-SVD--
+https://github.com/lixueclaire/Parallel-SVD
+
+
+ngular Value Decomposition on Distributed Reconfigurable Systems
+file:///home/abraham/Descargas/paper.pdf

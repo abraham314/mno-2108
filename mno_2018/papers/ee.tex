@@ -1,0 +1,312 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={Singular Value Decomposition on GPU using CUDA},
+            pdfauthor={Abraham Nieto 51556},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{Singular Value Decomposition on GPU using CUDA}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+    \author{Abraham Nieto 51556}
+    \preauthor{\centering\large\emph}
+  \postauthor{\par}
+      \predate{\centering\large\emph}
+  \postdate{\par}
+    \date{28 de mayo de 2018}
+
+
+\begin{document}
+\maketitle
+
+El paper habla de hacer la descomposición SVD en GPUs a tráves de CUDA,
+recordar que la descomposición SVD es de la forma \(A=U*\Sigma*V^t\)
+donde \(A\) es ua matriz de dimensión \(mxn\) , \(U\) es uma matriz de
+\(mxm\) ortogonal, \(V\) es una matriz de \(nxn\) ortogonal y \(\Sigma\)
+es una matriz diagonal de \(mxn\) con elementos \(\sigma_{i,j}=0\) para
+\(i \neq j\) y \(\sigma_{i,i}>0\).
+
+Últimamente se ha incrementado el uso de las GPU's para cómputo
+científico más allá de las gráficas, SVD es un ejemplo de esto, muchos
+algoritmos se han desarrollado usando GPU's para cómputo matemático con
+el objetivo de poder explotar el paralelismo de las GPU's. Se han
+realizado muchos esfuerzos para paralelizar el Algoritmo SVD en
+arquitecturas como FPGA, Cell Processors, GPU, etc., que tienen una
+arquitectura paralela escalable, por ejemplo Ma et al. {[}19{]} propuso
+la implementación de doble cara algoritmo SVD de rotación de Jacobi en
+un FPGA, Bobda et al. {[}6{]} propuso una implementación eficiente de la
+SVD para matrices grandes y la posibilidad de integrar FPGA's como parte
+de un Sistema Reconfigurable Distribuido, etc.
+
+Zhang Shu presentó la implementación del método One Sided Jacobi para
+SVD en GPU usando CUDA. El rendimiento de su algoritmo está limitado por
+la disponibilidad de memoria compartida y funciona bien solo para
+matrices de pequeño tamaño. Bondhugula propuso un híbrido Implementación
+basada en GPU de descomposición de valores singulares utilizando
+sombreadores de fragmentos y objetos de búfer de cuadros en los que la
+diagonalización se realizaría en la CPU.
+
+Se puede desarrollar el algoritmo SVD usando el método de Golub-Reinsch
+que consiste en 2 pasos: 1.-reducir la matriz original a una matriz
+bidiagonal(Bidiagonalización): La matriz se reduce primero a una matriz
+bidiagonal utilizando una serie de transformaciones.
+
+En este paso dada una matriz \(A\) es descompuesta como: \[
+A=QBP^T
+\] Aplicando una serie de transformaciones householder donde \(B\) es
+unamatriz bidiagonal y \(Q\) y \(P\) son matrices de householder
+unitarias. Donde \[
+Q^T=\prod_{i=1}^{n} H_{i},\ P=\prod_{i=1}^{n-2} G_{i}
+\] con \(H_{i}=I-\sigma_{1,i}u^(i)u^(i)^T\) y
+\(G_{i}=I-\sigma_{2,i}v^(i)v^(i)^T\).
+
+\(u^(i)\)'s son los vectores de tamaño m con i-1 ceros y \(v^(i)\)'s son
+los vectores de tamaño n con i ceros.
+
+En otras palabras la bidiagonalización puede lograrse alternándose el
+vector matricial multiplicado por las actualizaciones de rango uno
+introducidas por Golub y Kahan.
+
+Las matrices Q y P dadas se calculan de manera similar, ya que también
+involucran la multiplicación por H i `s y G i' s, respectivamente, pero
+en orden inverso. Usamos el término parcial bidiagonalización para
+referirnos al cálculo de la matriz B, sin hacer un seguimiento de las
+matrices P y Q. Esto es computacionalmente menos costoso que completa
+bidiagonalización y fue la operación implementada en la GPU por
+Bondhugula.
+
+Algoritmo 2
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Algorithm }\DecValTok{2}\NormalTok{ Bidiagonalization algorithm}
+\NormalTok{Require}\OperatorTok{:}\StringTok{ }\NormalTok{m ≥ n}
+\NormalTok{n}
+\DecValTok{1}\OperatorTok{:}\StringTok{ }\NormalTok{kM ax ← L}
+\NormalTok{\{L is the block size\}}
+\DecValTok{2}\OperatorTok{:}\StringTok{ }\ControlFlowTok{for}\NormalTok{ i =}\StringTok{ }\DecValTok{1}\NormalTok{ to kM ax do}
+\DecValTok{3}\OperatorTok{:}
+\NormalTok{t ← }\KeywordTok{L}\NormalTok{(i − }\DecValTok{1}\NormalTok{) }\OperatorTok{+}\StringTok{ }\DecValTok{1}
+\NormalTok{(t)}
+\DecValTok{4}\OperatorTok{:}
+\NormalTok{Compute û (t) , α }\DecValTok{1}\NormalTok{,t , σ }\DecValTok{1}\NormalTok{,t , k̂}
+\DecValTok{5}\OperatorTok{:}
+\NormalTok{Eliminate }\KeywordTok{A}\NormalTok{(t }\OperatorTok{:}\StringTok{ }\NormalTok{m, t) and update }\KeywordTok{Q}\NormalTok{(}\DecValTok{1} \OperatorTok{:}\StringTok{ }\NormalTok{m, t)}
+\DecValTok{6}\OperatorTok{:}
+\NormalTok{Compute new }\KeywordTok{A}\NormalTok{(t, t }\OperatorTok{+}\StringTok{ }\DecValTok{1} \OperatorTok{:}\StringTok{ }\NormalTok{n)}
+\NormalTok{(t)}
+\DecValTok{7}\OperatorTok{:}
+\NormalTok{Compute v̂ (t) , α }\DecValTok{2}\NormalTok{,t , σ }\DecValTok{2}\NormalTok{,t , l̂}
+\DecValTok{8}\OperatorTok{:}
+\NormalTok{Eliminate }\KeywordTok{A}\NormalTok{(t, t }\OperatorTok{+}\StringTok{ }\DecValTok{1} \OperatorTok{:}\StringTok{ }\NormalTok{n) and update P }\KeywordTok{T}\NormalTok{ (t, }\DecValTok{1} \OperatorTok{:}\StringTok{ }\NormalTok{n)}
+\DecValTok{9}\OperatorTok{:}
+\NormalTok{Compute ŵ (t) , ẑ (t) and store the vectors}
+\DecValTok{10}\OperatorTok{:}
+\ControlFlowTok{for}\NormalTok{ k =}\StringTok{ }\DecValTok{2}\NormalTok{ to L do}
+\DecValTok{11}\OperatorTok{:}
+\NormalTok{t ← }\KeywordTok{L}\NormalTok{(i − }\DecValTok{1}\NormalTok{) }\OperatorTok{+}\StringTok{ }\NormalTok{k}
+\DecValTok{12}\OperatorTok{:}
+\NormalTok{Compute new }\KeywordTok{A}\NormalTok{(t }\OperatorTok{:}\StringTok{ }\NormalTok{m, t) using k−}\DecValTok{1}\NormalTok{ update vectors}
+\NormalTok{(t)}
+\DecValTok{13}\OperatorTok{:}
+\NormalTok{Compute û (t) , α }\DecValTok{1}\NormalTok{,t , σ }\DecValTok{1}\NormalTok{,t , k̂}
+\DecValTok{14}\OperatorTok{:}
+\NormalTok{Eliminate }\KeywordTok{A}\NormalTok{(t }\OperatorTok{:}\StringTok{ }\NormalTok{m, t) and update }\KeywordTok{Q}\NormalTok{(}\DecValTok{1} \OperatorTok{:}\StringTok{ }\NormalTok{m, t)}
+\DecValTok{15}\OperatorTok{:}
+\NormalTok{Compute new }\KeywordTok{A}\NormalTok{(t, t }\OperatorTok{+}\StringTok{ }\DecValTok{1} \OperatorTok{:}\StringTok{ }\NormalTok{n)}
+\NormalTok{(t)}
+\DecValTok{16}\OperatorTok{:}
+\NormalTok{Compute v̂ (t) , α }\DecValTok{2}\NormalTok{,t , σ }\DecValTok{2}\NormalTok{,t , l̂}
+\DecValTok{17}\OperatorTok{:}
+\NormalTok{Eliminate }\KeywordTok{A}\NormalTok{(t, t }\OperatorTok{+}\StringTok{ }\DecValTok{1} \OperatorTok{:}\StringTok{ }\NormalTok{n) and update P }\KeywordTok{T}\NormalTok{ (t, }\DecValTok{1} \OperatorTok{:}\StringTok{ }\NormalTok{n)}
+\DecValTok{18}\OperatorTok{:}
+\NormalTok{Compute ŵ (t) , ẑ (t) and store the vectors}
+\DecValTok{19}\OperatorTok{:}
+\NormalTok{end }\ControlFlowTok{for}
+\DecValTok{20}\OperatorTok{:}
+\NormalTok{Update }\KeywordTok{A}\NormalTok{(iL}\OperatorTok{+}\DecValTok{1} \OperatorTok{:}\StringTok{ }\NormalTok{m, iL}\OperatorTok{+}\DecValTok{1} \OperatorTok{:}\StringTok{ }\NormalTok{n), }\KeywordTok{Q}\NormalTok{(}\DecValTok{1} \OperatorTok{:}\StringTok{ }\NormalTok{m, iL}\OperatorTok{+}\DecValTok{1} \OperatorTok{:}\StringTok{ }\NormalTok{m)}
+\NormalTok{and P }\KeywordTok{T}\NormalTok{ (iL }\OperatorTok{+}\StringTok{ }\DecValTok{1} \OperatorTok{:}\StringTok{ }\NormalTok{n, }\DecValTok{1} \OperatorTok{:}\StringTok{ }\NormalTok{n)}
+\DecValTok{21}\OperatorTok{:}\StringTok{ }\NormalTok{end }\ControlFlowTok{for}
+\end{Highlighting}
+\end{Shaded}
+
+El algoritmo 2 describe el procedimiento de bidiagonalización. Cada paso
+se puede realizar usando las funciones CUDA BLAS. CUBLAS proporciona un
+alto rendimiento de matriz-vector, multiplicación matriz-matriz y
+función de cálculo de norma. El enfoque para la bidiagonalización se
+puede realizar de manera eficiente ya que CUBLAS ofrece un alto
+rendimiento para matriz-vector, la multiplicación matriz-matriz incluso
+si una de las dimensiones es pequeña. Los experimentos demuestran que
+CUBLAS entregan mucho más rendimiento cuando se opera en matrices con
+dimensiones que son un múltiplo de 32 debido a problemas de alineación
+de memoria. El rendimiento de las bibliotecas de GPU depende de la
+ubicación de los datos y de cómo se usa la biblioteca.
+
+2.- diagonalizar la matriz encontrada en el paso 1(Diagonalización): La
+matriz bidiagonal se diagonaliza luego de realizar desplazamientos QR
+implícitamente desplazados.
+
+SVD es un algoritmo de orden \(O(mn^2)\) para \(m ≥ n\).
+
+La matriz bidiagonal puede ser reducida a una matriz diagonal aplicando
+iterativamente el algoritmo \(QR\) entonces la matriz \(B\) bidiagonal
+puede descomponerse como \[
+\Sigma=X^TBY
+\]
+
+donde \(\Sigma\) es un matriz diagonal y \(X\) y \(Y\) son matrices
+ortonormales, cada iteración actualiza la diagonal y los elementos de la
+super diagonal tales que el valor de los elementos de la super diagonal
+son menores que su valor anterior.
+
+Con respecto a la diagonalización en los GPU's la diagonal y la
+superdiagonal de los elementos de \(B\) son copiados al CPU aplicando
+rotaciones de Givens en \(B\) y calculando los vectores de coeficientes
+se raliza secuencialmente en la CPU ya que sólo requiere acceso a los
+elementos de la diagonal y superdiagonal.
+
+Se usan los threads de la GPU para procesar elementos de cada fila en
+paralelo. Esto proporciona un alto rendimiento en matrices grandes pero
+también funciona bien para matrices de tamaño mediano.
+
+cada thread opera en un elemento de la fila, Esta división de la fila en
+bloques y bucle se puede hacer de manera eficiente en Arquitectura CUDA,
+ya que cada thread realiza de forma independiente cómputos. Los datos
+requeridos para el bloque se almacenan en la memoria compartida y las
+operaciones se pueden realizar de manera eficiente en un
+multiprocesador.
+
+\textbf{Algoritmo para la Matriz A.} 1: B ← Q T AP \{Bidiagonalization
+of A to B\} 2: Σ ← X T BY \{Diagonalization of B to Σ\} 3: U ← QX 4: V T
+← (P Y ) T \{Compute orthogonal matrices U and V T and SVD of A = U ΣV T
+\}
+
+Para la implementación del SVD se usó la multiplicación de matriz CUBLAS
+rutinas de curación Las matrices Q, P T, X T, Y T, U y V T son en el
+dispositivo. Las matrices ortogonales U y V T pueden entonces ser
+copiado a la CPU. d (i) 's contiene los valores singulares, es decir,
+elementos diagonales de Σ y está en la CPU.
+
+Con respecto a los resultados se hicieron comparativos entre el
+desempeño de matlab vs.los GPUs con nvidia , para matrices cuadradas
+cuando la dimensión de esta es mayor a 512 el performance es es mejor
+con las GPUs, cuando las matrices son rectangulares a cualquier
+dimensión el método de las GPUs siempre es más eficiente.
+
+En conclusión el algoritmo de descomposiciónde svd explota l paralelismo
+de las GPUs, la bidiagonalización de la matriz es procesada por las GPUs
+usando la librería CUBLAS optimizada para maximizar el peformance, se
+utilizó una implementación híbrida para la diagonalización de la matriz
+que divide el computo entre el CPU y GPU.
+
+
+\end{document}

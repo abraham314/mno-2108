@@ -1,0 +1,71 @@
+---
+title: "Descomposición en Valores Singulares"
+author: "Equipo 10"
+date: "15 de mayo de 2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Ejemplo de SVD
+
+Para el presente ejemplo de descomposición en valores singulares se utilizará la siguiente matriz $A$:
+
+$$A = \begin{bmatrix} 1 & 1 \\ 0 & 0 \end{bmatrix}$$
+
+### 1. Cálculo de Valores y Vectores Propios
+
+Para obtener los valores singulares de una matriz $A$, se debe de encontrar el determinante de la matriz $A^{T}A-\lambda I$. Con la matriz ejemplo tenemos:
+
+$$A^{T}A = \begin{bmatrix} 1 & 0 \\ 1 & 0 \end{bmatrix}\begin{bmatrix} 1 & 1 \\ 0 & 0 \end{bmatrix} = \begin{bmatrix} 1 & 1 \\ 1 & 1 \end{bmatrix}$$
+
+Luego restamos $\lambda I$:
+
+$$A^{T}A - \lambda I = \begin{bmatrix} 1 & 1 \\ 1 & 1 \end{bmatrix} - \begin{bmatrix} \lambda & 0 \\ 0 & \lambda \end{bmatrix} = \begin{bmatrix} 1-\lambda & 1 \\ 1 & 1-\lambda \end{bmatrix}$$
+
+Y obteniendo el determinante tenemos que:
+
+$$det(A^{T}A-\lambda I) = (1-\lambda)^{2}-1 =\lambda(\lambda-2)$$
+Y por lo tanto los valores propios son: $\lambda_{1}=0$ y $\lambda_{2}=2$
+
+Por lo que los valores singulares son las correspondientes raices cuadradas de los valores propios: $\sigma_{1}=0$ y $\sigma_{2}=\sqrt{2}$
+
+Por otra parte, para obtener los vectores propios se sustituyen los valores propios en la matriz $A^{T}A - \lambda I$ y se multiplica por el vector que se desea obtener de tal manera que el resultado se un vector nulo. Por lo tanto:
+
+$$(A^{T}A - \lambda_{1} I)V_{1} = \begin{bmatrix} 1 & 1 \\ 1 & 1 \end{bmatrix}V_{1}$$
+$$(A^{T}A - \lambda_{2} I)V_{2} = \begin{bmatrix} -1 & 1 \\ 1 & -1 \end{bmatrix}V_{2}$$
+
+E igualando a cero cada ecuacion obtenemos que:
+
+$$V_{1} = \begin{bmatrix} -1 \\ 1 \end{bmatrix} ,  V_{2} = \begin{bmatrix} 1 \\ 1 \end{bmatrix}$$
+
+### 2. Descomposición SVD
+
+Un primer paso para obtener la descomposición de $A = U\Sigma V^{T}$ es normalizar los vectores propios. Por lo tanto:
+
+$$V^{*}_{1} = \begin{bmatrix} -1/\sqrt{2} \\ 1/\sqrt{2} \end{bmatrix} ,  V^{*}_{2} = \begin{bmatrix} 1/\sqrt{2} \\ 1/\sqrt{2} \end{bmatrix}$$
+
+Por lo que $V$ y $V^{T}$ serían:
+
+$$V = V^{T} =\begin{bmatrix} -1/\sqrt{2} & 1/\sqrt{2}\\ 1/\sqrt{2} & 1/\sqrt{2}\end{bmatrix} $$
+
+Por otra parte, $\Sigma$ corresponde a la matriz diagonal con los valores singulares de $A$:
+
+$$\Sigma =\begin{bmatrix} 0 & 0\\ 0 & \sqrt{2}\end{bmatrix} $$
+
+Y para $U$, se debe de sustituir los valores singulares y los vectores propios normalizados en la siguiente ecuación:
+
+$$ U_{i} = \frac{1}{\sigma_{i}}AV^{*}_{i}$$
+
+Esto solamente para valores singulares no nulos, por lo que:
+
+$$U_{1}  = \begin{bmatrix} 0 \\ 0 \end{bmatrix}$$
+
+$$U_{2} = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 & 1 \\ 0 & 0 \end{bmatrix}\begin{bmatrix} 1/\sqrt{2} \\ 1/\sqrt{2} \end{bmatrix} = \begin{bmatrix} 1 \\ 0 \end{bmatrix}$$
+
+Y finalmente sustituyendo tenemos que:
+
+$$A = \begin{bmatrix} 0 & 1 \\ 0 &0 \end{bmatrix}\begin{bmatrix} 0 & 0\\ 0 & \sqrt{2}\end{bmatrix}\begin{bmatrix} -1/\sqrt{2} & 1/\sqrt{2}\\ 1/\sqrt{2} & 1/\sqrt{2}\end{bmatrix}$$
+

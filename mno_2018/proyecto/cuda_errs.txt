@@ -1,0 +1,2 @@
+sudo dpkg -i --force-overwrite /var/cache/apt/archives/nvidia-installer-cleanup_20151021+8_amd64.deb
+

@@ -1,0 +1,14 @@
+1)	¿Cuáles son las características del análisis numérico y cómputo científico?
+R= dise;o y analisis  de algoritmos 
+
+
+2)	¿Qué propiedades debe tener un buen algoritmo?
+R=eficiencia-costo computacional , confiables, exactos, estabilidad-no amplificar errores generados por aproximaciones,robusto 
+
+3)	¿Cuáles fuentes de error principalmente son estudiadas por el análisis numérico y cómputo científico al resolver un problema? 
+
+R=truncamiento.-rel con uso de procesos o cantidades finitas, redondeo-rel con la representacion de los  numeros y aritmetica enuna maquina.
+
+4)	Menciona las diferencias entre los términos inexactitud y precisión.
+
+R= precision se refiere a la cercania de las estimaciones o calculos y exactitus con respecto al valor final que queremos estimarS
